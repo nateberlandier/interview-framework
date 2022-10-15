@@ -6,6 +6,7 @@ namespace Example\Tests\Integration\View;
 
 use Example\Tests\BaseCase;
 use Mini\Controller\Exception\BadInputException;
+use Example\Model\ExampleModel;
 
 /**
  * Example view builder test.
@@ -39,8 +40,15 @@ class ExampleViewTest extends BaseCase
                 'Test description'
             ]
         ]);
+        
+        //added creation of ExampleModel object to send as parameter
+        $ex_model = new ExampleModel();
+        $ex_model->fields["id"] = 1;
+        $ex_model->fields["created"] = '2020-07-14 12:00:00';
+        $ex_model->fields["code"] = 'TESTCODE';
+        $ex_model->fields["description"] = 'Test description';
 
-        $view = $this->getClass('Example\View\ExampleView')->get(1);
+        $view = $this->getClass('Example\View\ExampleView')->get($ex_model);
 
         $this->assertNotEmpty($view);
         $this->assertIsString($view);
@@ -58,7 +66,14 @@ class ExampleViewTest extends BaseCase
     public function testGetErrorsOnUnknownExampleId(): void
     {
         $this->expectException(BadInputException::class);
+        
+        //added creation of ExampleModel object to send as parameter
+        $ex_model = new ExampleModel();
+        $ex_model->fields["id"] = 1;
+        $ex_model->fields["created"] = '2020-07-14 12:00:00';
+        $ex_model->fields["code"] = 'TESTCODE';
+        $ex_model->fields["description"] = 'Test error';
 
-        $this->getClass('Example\View\ExampleView')->get(1);
+        $this->getClass('Example\View\ExampleView')->get($ex_model);
     }
 }

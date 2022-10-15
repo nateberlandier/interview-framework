@@ -12,6 +12,7 @@ use Mini\Controller\Exception\BadInputException;
  */
 class ExampleModel extends Model
 {
+    //array that will be used in object to hold model data
     public $fields = [
         "id" => "",
         "created" => "",
@@ -19,6 +20,7 @@ class ExampleModel extends Model
         "description" => ""
     ];
     
+    //get field value of model array if it has a value
     public function getField(string $field): string {
         if (isset($this->fields[$field])) {
             return $this->fields[$field];
@@ -26,6 +28,7 @@ class ExampleModel extends Model
         throw new BadInputException($field." does not exist in model object");
     }
     
+    //set field in model array if the key exists
     public function setField(string $field, string $value): string {
         if (array_key_exists($field, $this->fields)) {
             $this->fields[$field] = $value;
@@ -63,11 +66,7 @@ class ExampleModel extends Model
     /**
      * Create an example.
      *
-     * @param string $created     example created on
-     * @param string $code        example code
-     * @param string $description example description
-     *  
-     * @return int example id
+     * Saves returned id from db in model object
      */
     public function create()
     {

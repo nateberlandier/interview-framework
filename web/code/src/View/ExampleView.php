@@ -32,22 +32,24 @@ class ExampleView
     /**
      * Get the example view to display its data.
      * 
-     * @param int $id example id
+     * @param ExampleModel $model
      * 
      * @return string view template
      *
-     * @throws BadInputException if no example data is returned
+     * @throws BadInputException if model does not exist in db
      */
     public function get(ExampleModel $model): string
     {
         $this->model = $model;
-        $data = $this->model->fields;
+        
+        //hitting the db is required at least once, use requirement as a content check
         $compare = $this->model->get($this->model->fields['id']);
         
-        if (!$data == $compare) {
+        //if our model as a parameter does not match entry in db then it does not exist
+        if (!$this->model->fields == $compare) {
             throw new BadInputException('Unknown example ID');
         }
 
-        return view('app/example/detail', $data);
+        return view('app/example/detail', $this->model->fields);
     }
 }
