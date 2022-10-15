@@ -50,16 +50,21 @@ class ExampleController extends Controller
      */
     public function createExample(Request $request): string
     {
-        if (! $code = $request->request->get('code')){
+        $this->model->fields['created'] = now();
+        $this->model->fields['code'] = $request->request->get('code');
+        $this->model->fields['description'] = $request->request->get('description');
+        
+        if (! $this->model->fields['code']){
             throw new BadInputException('Example code missing');
         }
 
-        if (! $description = $request->request->get('description')) {
+        if (! $this->model->fields['description']) {
             throw new BadInputException('Example description missing');
         }
 
+        $this->model->create();
         return $this->view->get(
-            $this->model->create(now(), $code, $description)
+            $this->model
         );
     }
 }

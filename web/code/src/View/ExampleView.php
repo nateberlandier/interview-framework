@@ -38,11 +38,13 @@ class ExampleView
      *
      * @throws BadInputException if no example data is returned
      */
-    public function get(int $id): string
+    public function get(ExampleModel $model): string
     {
-        $data = $this->model->get($id);
-
-        if (!$data) {
+        $this->model = $model;
+        $data = $this->model->fields;
+        $compare = $this->model->get($this->model->fields['id']);
+        
+        if (!$data == $compare) {
             throw new BadInputException('Unknown example ID');
         }
 

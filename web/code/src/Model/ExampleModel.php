@@ -5,12 +5,34 @@ declare(strict_types = 1);
 namespace Example\Model;
 
 use Mini\Model\Model;
+use Mini\Controller\Exception\BadInputException;
 
 /**
  * Example data.
  */
 class ExampleModel extends Model
 {
+    public $fields = [
+        "id" => "",
+        "created" => "",
+        "code" => "",
+        "description" => ""
+    ];
+    
+    public function getField(string $field): string {
+        if (isset($this->fields[$field])) {
+            return $this->fields[$field];
+        }
+        throw new BadInputException($field." does not exist in model object");
+    }
+    
+    public function setField(string $field, string $value): string {
+        if (array_key_exists($field, $this->fields)) {
+            $this->fields[$field] = $value;
+        }
+        throw new BadInputException($field." field does not exist, cannot set in model");
+    }
+    
     /**
      * Get example data by ID.
      *
@@ -47,7 +69,7 @@ class ExampleModel extends Model
      *  
      * @return int example id
      */
-    public function create(string $created, string $code, string $description): int
+    public function create()
     {
         $sql = '
             INSERT INTO
@@ -64,14 +86,14 @@ class ExampleModel extends Model
             'title'  => 'Create example',
             'sql'    => $sql,
             'inputs' => [
-                $created,
-                $code,
-                $description
+                $this->fields["created"],
+                $this->fields["code"],
+                $this->fields["description"]
             ]
         ]);
 
         $this->db->validateAffected();
 
-        return $id;
+        $this->fields["id"] = $id;
     }
 }
