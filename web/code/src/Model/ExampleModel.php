@@ -22,18 +22,24 @@ class ExampleModel extends Model
     
     //get field value of model array if it has a value
     public function getField(string $field): string {
-        if (isset($this->fields[$field])) {
-            return $this->fields[$field];
+        if (!array_key_exists($field, $this->fields)) {
+            throw new BadInputException($field." does not exist");
         }
-        throw new BadInputException($field." does not exist in model object");
+        
+        if ($this->fields[$field] == "") {
+            throw new BadInputException($field." is not set in model object");
+        }
+        
+        return $this->fields[$field];
     }
     
     //set field in model array if the key exists
-    public function setField(string $field, string $value): string {
+    public function setField(string $field, string $value): void {
         if (array_key_exists($field, $this->fields)) {
             $this->fields[$field] = $value;
+        } else {
+            throw new BadInputException($field." field does not exist, cannot set in model object");
         }
-        throw new BadInputException($field." field does not exist, cannot set in model");
     }
     
     /**
@@ -66,9 +72,9 @@ class ExampleModel extends Model
     /**
      * Create an example.
      *
-     * Saves returned id from db in model object
+     * Saves returned id from db into model object
      */
-    public function create()
+    public function create(): void
     {
         $sql = '
             INSERT INTO
